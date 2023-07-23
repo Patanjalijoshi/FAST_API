@@ -3,9 +3,10 @@ from fastapi import FastAPI
 from typing import List
 from models import User, Gender, Role
 
-app = FastAPI()
+app = F astAPI()
 
-db: List[User] = [
+db: List[User] = [  
+      
     User(
         id=uuid4(),
         first_name="Ram",
