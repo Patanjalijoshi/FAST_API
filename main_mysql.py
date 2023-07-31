@@ -98,12 +98,20 @@ async def register_user(user: User):
 
 @app.delete("/api/v1/user/{user_id}")
 async def delete_user(user_id: UUID):
-    with get_mysql_connection() as connection:
-        with connection.cursor() as cursor:
-            query = 'DELETE FROM users WHERE id = %s'
-            cursor.execute(query, (str(user_id),))
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail=f"user with id: {user_id} does not exist")
+    try:
+        with get_mysql_connection() as connection:
+            with connection.cursor() as cursor:
+                query = 'DELETE FROM users WHERE id = %s'
+                cursor.execute(query, (str(user_id),))
+                if cursor.rowcount == 0:
+                    raise HTTPException(status_code=404, detail=f"User with id: {user_id} does not exist")
+                else:
+                    return JSONResponse(status_code=200, content={"message": f"User with id: {user_id} has been deleted"})
+    except Exception as e:
+        # Print or log the exception to check for any errors
+        print(f"Error while deleting user: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while processing the request.")
+
 
 @app.put("/api/v1/user/{user_id}")
 async def update_user(user_id: UUID, user_update: UserUpdateRequest):
